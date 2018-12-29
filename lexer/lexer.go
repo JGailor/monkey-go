@@ -1,6 +1,9 @@
 package lexer
 
-import "monkey/token"
+import (
+	"monkey/token"
+	"strings"
+)
 
 type Lexer struct {
 	input        string
@@ -129,7 +132,7 @@ func (l *Lexer) readNumber() string {
 	// Here is the important bit: we track the start position of the number in our input above,
 	// and when we've found the end of the number we take a slice out of the input that represents
 	// the number
-	return l.input[position:l.position]
+	return strings.Replace(l.input[position:l.position], "_", "", -1)
 }
 
 func isLetter(ch byte) bool {
@@ -138,7 +141,8 @@ func isLetter(ch byte) bool {
 }
 
 func isDigit(ch byte) bool {
-	return '0' <= ch && ch <= '9'
+	// Support using _ as a separator for large numbers
+	return ('0' <= ch && ch <= '9') || ch == '_'
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
